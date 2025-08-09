@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Original Characters</title>
+    <!-- Tailwind CSSの読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fontsの読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <style>
+        /* カスタムフォントの設定 */
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #fdfbf7; /* 少し温かみのある白 */
+        }
+        .font-yuji {
+            font-family: 'Yuji Syuku', serif;
+        }
+        /* モーダルのトランジション */
+        .modal-enter-active, .modal-leave-active {
+            transition: opacity 300ms, transform 300ms;
+        }
+        .modal-enter-from, .modal-leave-to {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        /* アクティブなタブのスタイル */
+        .tab-active {
+            border-color: #a89070;
+            color: #a89070;
+            font-weight: bold;
+        }
+        /* 身長早見表のスタイル */
+        .height-chart-bar {
+            transition: height 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- ヘッダー -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-gray-200">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-2xl md:text-3xl font-yuji font-bold text-gray-800">うちの子まとめ</h1>
+            <p class="text-sm text-gray-500">My Original Characters Portfolio</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="container mx-auto px-6 py-8 md:py-12">
+        <!-- タブナビゲーション -->
+        <div class="mb-8 border-b border-gray-300">
+            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                <button id="tab-list" class="tab-active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">キャラクター一覧</button>
+                <button id="tab-relations" class="text-gray-500 hover:text-gray-700 hover:border-gray-400 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">相関図</button>
+                <button id="tab-height" class="text-gray-500 hover:text-gray-700 hover:border-gray-400 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">身長早見表</button>
+            </nav>
+        </div>
+
+        <!-- コンテンツエリア -->
+        <div id="content-area">
+            <!-- キャラクター一覧 -->
+            <div id="view-list">
+                <div id="character-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                    <!-- キャラクターカードはJavaScriptでここに生成されます -->
+                </div>
+            </div>
+
+            <!-- 相関図 -->
+            <div id="view-relations" class="hidden">
+                 <div id="relation-chart-container" class="relative w-full h-[600px] md:h-[700px] bg-gray-50 rounded-lg border border-dashed">
+                    <!-- 相関図はここに生成されます -->
+                 </div>
+            </div>
+
+            <!-- 身長早見表 -->
+            <div id="view-height" class="hidden">
+                <div id="height-chart-container" class="relative w-full h-[500px] bg-gray-50 rounded-lg border p-4 flex items-end justify-center gap-2 overflow-x-auto">
+                    <!-- 身長早見表はここに生成されます -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-gray-100 mt-12">
+        <div class="container mx-auto px-6 py-4 text-center text-gray-500 text-sm">
+            <p>&copy; 2024 Your Name. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- キャラクター詳細モーダル -->
+    <div id="modal-container" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
+        <div id="modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+            <!-- コンテンツはJavaScriptでここに生成されます -->
+        </div>
+        <div id="modal-bg-close" class="absolute inset-0"></div>
+    </div>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- キャラクターデータ ---
+        // profileに身長(heightCm)を数値で追加し、関係性(relationships)を追加してください。
+        const characters = [
+            {
+                id: 1,
+                name: 'アリア',
+                epithet: '星詠みの魔女',
+                imageUrl: 'https://placehold.co/600x800/ece4d4/a89070?text=Aria',
+                profile: {
+                    '年齢': '117歳 (外見は17歳)',
+                    '身長': '158cm',
+                    'heightCm': 158,
+                    '好きなもの': '星空、紅茶、古い本',
+                    '苦手なもの': '人混み、大きな音'
+                },
+                description: '人里離れた森の奥にある塔で、星を読みながら暮らしている魔女。穏やかで心優しい性格だが、少し人見知り。運命の星々を読み解く力を持ち、時折村人の相談に乗ることもある。使い魔は白フクロウの「ノクス」。',
+                color: '#a89070',
+                relationships: [
+                    { targetId: 2, type: '興味' },
+                    { targetId: 5, type: '友人' }
+                ]
+            },
+            {
+                id: 2,
+                name: 'カイ',
+                epithet: '風の剣士',
+                imageUrl: 'https://placehold.co/600x800/d4e4ec/7090a8?text=Kai',
+                profile: {
+                    '年齢': '19歳',
+                    '身長': '179cm',
+                    'heightCm': 179,
+                    '好きなもの': '冒険、肉料理、鍛錬',
+                    '苦手なもの': '退屈、じっとしていること'
+                },
+                description: '自由を愛し、世界中を旅する若き剣士。風を操る剣技を得意とする。明るく快活な性格で、誰とでもすぐに打ち解けることができる。相棒の疾風の剣「シルフィード」と共に、まだ見ぬ景色を求めて旅を続けている。',
+                color: '#7090a8',
+                relationships: [
+                    { targetId: 4, type: 'ライバル' }
+                ]
+            },
+            {
+                id: 3,
+                name: 'ミモリ',
+                epithet: '機械仕掛けの歌姫',
+                imageUrl: 'https://placehold.co/600x800/e4d4ec/9070a8?text=Mimori',
+                profile: {
+                    '年齢': '製造から3年',
+                    '身長': '162cm',
+                    'heightCm': 162,
+                    '好きなもの': '歌うこと、人間観察',
+                    '苦手なもの': '水、錆びること'
+                },
+                description: '蒸気と歯車の街で生まれた自律思考型アンドロイド。その歌声は人々の心を癒し、街の象徴となっている。感情ユニットを搭載しており、人間のように笑い、悩む。自分の「心」とは何かを探している。',
+                color: '#9070a8',
+                relationships: []
+            },
+            {
+                id: 4,
+                name: 'レン',
+                epithet: '影に潜む射手',
+                imageUrl: 'https://placehold.co/600x800/d4d4d4/555555?text=Ren',
+                profile: {
+                    '年齢': '不明',
+                    '身長': '182cm',
+                    'heightCm': 182,
+                    '好きなもの': '静寂、月夜',
+                    '苦手なもの': '裏切り、日光'
+                },
+                description: 'とある組織に所属する凄腕の暗殺者。影を自在に操り、音もなく標的を仕留める。口数が少なく、常に無表情で本心を見せないが、根は義理堅い一面も。過去に何か大きな喪失を経験したらしい。',
+                color: '#555555',
+                relationships: [
+                    { targetId: 2, type: '好敵手' }
+                ]
+            },
+            {
+                id: 5,
+                name: 'ユキ',
+                epithet: '雪原の守り人',
+                imageUrl: 'https://placehold.co/600x800/eaf4f4/87c4c4?text=Yuki',
+                profile: {
+                    '年齢': '16歳',
+                    '身長': '155cm',
+                    'heightCm': 155,
+                    '好きなもの': '動物、温かいスープ',
+                    '苦手なもの': '暑さ、嘘'
+                },
+                description: '万年雪に覆われた北の集落で暮らす少女。氷や雪を操る不思議な力を持つ。純粋で心優しい性格で、雪原の動物たちと心を通わせることができる。閉ざされた故郷から、外の世界に憧れを抱いている。',
+                color: '#87c4c4',
+                relationships: [
+                    { targetId: 1, type: '憧れ' }
+                ]
+            }
+        ];
+
+        // --- DOM要素の取得 ---
+        const tabs = {
+            list: document.getElementById('tab-list'),
+            relations: document.getElementById('tab-relations'),
+            height: document.getElementById('tab-height'),
+        };
+        const views = {
+            list: document.getElementById('view-list'),
+            relations: document.getElementById('view-relations'),
+            height: document.getElementById('view-height'),
+        };
+        const characterGrid = document.getElementById('character-grid');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+        const modalBgClose = document.getElementById('modal-bg-close');
+
+        // --- タブ切り替え処理 ---
+        function switchTab(activeTab) {
+            Object.keys(tabs).forEach(key => {
+                const tab = tabs[key];
+                const view = views[key];
+                if (key === activeTab) {
+                    tab.classList.add('tab-active');
+                    tab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-400');
+                    view.classList.remove('hidden');
+                } else {
+                    tab.classList.remove('tab-active');
+                    tab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-400');
+                    view.classList.add('hidden');
+                }
+            });
+            if(activeTab === 'relations') renderRelationChart();
+            if(activeTab === 'height') renderHeightChart();
+        }
+
+        tabs.list.addEventListener('click', () => switchTab('list'));
+        tabs.relations.addEventListener('click', () => switchTab('relations'));
+        tabs.height.addEventListener('click', () => switchTab('height'));
+
+        // --- キャラクター一覧表示 ---
+        function renderCharacterCards() {
+            characterGrid.innerHTML = '';
+            characters.forEach(char => {
+                const card = document.createElement('div');
+                card.className = 'group cursor-pointer transform hover:-translate-y-1 transition-transform duration-300';
+                card.innerHTML = `
+                    <div class="aspect-[3/4] bg-gray-200 rounded-lg overflow-hidden shadow-md">
+                        <img src="${char.imageUrl}" alt="${char.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                    </div>
+                    <div class="mt-2 text-center">
+                        <h3 class="font-bold text-gray-800">${char.name}</h3>
+                        <p class="text-sm text-gray-500">${char.epithet}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => openModal(char.id));
+                characterGrid.appendChild(card);
+            });
+        }
+
+        // --- 相関図表示 ---
+        function renderRelationChart() {
+            const container = document.getElementById('relation-chart-container');
+            container.innerHTML = '';
+            const positions = {};
+            const containerRect = container.getBoundingClientRect();
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+            const radius = Math.min(centerX, centerY) * 0.75;
+
+            // 1. キャラクターノードを円形に配置
+            characters.forEach((char, index) => {
+                const angle = (index / characters.length) * 2 * Math.PI - (Math.PI / 2);
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                positions[char.id] = { x, y };
+
+                const node = document.createElement('div');
+                node.className = 'absolute flex flex-col items-center cursor-pointer';
+                node.style.left = `${x}px`;
+                node.style.top = `${y}px`;
+                node.style.transform = 'translate(-50%, -50%)';
+                node.innerHTML = `
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-4" style="border-color: ${char.color};">
+                        <img src="${char.imageUrl}" alt="${char.name}" class="w-full h-full object-cover">
+                    </div>
+                    <p class="mt-1 text-sm font-bold">${char.name}</p>
+                `;
+                node.addEventListener('click', () => openModal(char.id));
+                container.appendChild(node);
+            });
+
+            // 2. 関係性の線とラベルを描画
+            const drawnRelations = new Set();
+            characters.forEach(char => {
+                if (!char.relationships) return;
+                char.relationships.forEach(rel => {
+                    const pairKey = [char.id, rel.targetId].sort().join('-');
+                    if (drawnRelations.has(pairKey)) return;
+
+                    const target = characters.find(c => c.id === rel.targetId);
+                    if (!target) return;
+
+                    const p1 = positions[char.id];
+                    const p2 = positions[target.id];
+                    
+                    const dx = p2.x - p1.x;
+                    const dy = p2.y - p1.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                    const line = document.createElement('div');
+                    line.className = 'absolute bg-gray-400';
+                    line.style.left = `${p1.x}px`;
+                    line.style.top = `${p1.y}px`;
+                    line.style.width = `${distance}px`;
+                    line.style.height = '2px';
+                    line.style.transformOrigin = '0 0';
+                    line.style.transform = `rotate(${angle}deg)`;
+                    container.insertBefore(line, container.firstChild); // 線をノードの背後に描画
+                    
+                    const label = document.createElement('div');
+                    label.className = 'absolute bg-white px-2 py-0.5 rounded text-xs text-gray-600 border';
+                    label.textContent = rel.type;
+                    label.style.left = `${p1.x + dx / 2}px`;
+                    label.style.top = `${p1.y + dy / 2}px`;
+                    label.style.transform = 'translate(-50%, -50%)';
+                    container.appendChild(label);
+
+                    drawnRelations.add(pairKey);
+                });
+            });
+        }
+
+        // --- 身長早見表表示 ---
+        function renderHeightChart() {
+            const container = document.getElementById('height-chart-container');
+            container.innerHTML = '';
+            const maxHeight = Math.max(...characters.map(c => c.profile.heightCm || 0), 180);
+
+            // 背景の目盛り線を追加
+            for (let h = 50; h < maxHeight + 50; h += 50) {
+                const scaleLine = document.createElement('div');
+                scaleLine.className = 'absolute w-full border-b border-dashed border-gray-300';
+                scaleLine.style.bottom = `${(h / maxHeight) * 100}%`;
+                scaleLine.style.left = '0';
+                
+                const scaleLabel = document.createElement('span');
+                scaleLabel.className = 'absolute -left-10 text-xs text-gray-500';
+                scaleLabel.textContent = `${h}cm`;
+                scaleLine.appendChild(scaleLabel);
+                container.appendChild(scaleLine);
+            }
+
+            characters.sort((a, b) => (a.profile.heightCm || 0) - (b.profile.heightCm || 0)).forEach(char => {
+                const heightCm = char.profile.heightCm || 0;
+                if (heightCm === 0) return;
+
+                const barContainer = document.createElement('div');
+                barContainer.className = 'flex flex-col items-center h-full justify-end flex-shrink-0 w-20 cursor-pointer group';
+                
+                const barHeight = (heightCm / maxHeight) * 100;
+
+                barContainer.innerHTML = `
+                    <div class="text-sm font-bold mb-1">${heightCm}cm</div>
+                    <div class="height-chart-bar w-10 md:w-12 rounded-t-md group-hover:opacity-100" style="height: ${barHeight}%; background-color: ${char.color}; opacity: 0.8;"></div>
+                    <div class="w-12 h-12 mt-2 rounded-full overflow-hidden border-2 border-white shadow-md">
+                        <img src="${char.imageUrl}" alt="${char.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="mt-1 text-center text-sm font-bold">${char.name}</div>
+                `;
+                barContainer.addEventListener('click', () => openModal(char.id));
+                container.appendChild(barContainer);
+            });
+        }
+
+        // --- モーダル処理 ---
+        function openModal(characterId) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            let profileHtml = '';
+            for (const [key, value] of Object.entries(character.profile)) {
+                if (key === 'heightCm') continue; // heightCmは表示しない
+                profileHtml += `
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-2 px-4 bg-gray-50 w-1/3">${key}</th>
+                        <td class="text-left py-2 px-4">${value}</td>
+                    </tr>
+                `;
+            }
+
+            modalContent.innerHTML = `
+                <button id="modal-close-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div class="md:flex">
+                    <div class="md:w-1/3 lg:w-2/5 flex-shrink-0">
+                        <div class="aspect-[3/4] bg-gray-200">
+                           <img src="${character.imageUrl}" alt="${character.name}" class="w-full h-full object-cover md:rounded-l-lg">
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 lg:w-3/5 p-6 md:p-8">
+                        <h2 class="text-3xl md:text-4xl font-yuji font-bold" style="color: ${character.color};">${character.name}</h2>
+                        <p class="text-md text-gray-600 mb-4">${character.epithet}</p>
+                        <p class="text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">${character.description}</p>
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <table class="w-full text-sm"><tbody>${profileHtml}</tbody></table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modalContainer.classList.remove('hidden');
+            modalContent.classList.add('modal-enter-active');
+            modalContent.classList.remove('modal-enter-from');
+            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+        }
+
+        function closeModal() {
+            modalContent.classList.add('modal-leave-to');
+            modalContent.addEventListener('transitionend', () => {
+                 modalContainer.classList.add('hidden');
+                 modalContent.classList.remove('modal-leave-to');
+            }, { once: true });
+        }
+
+        modalBgClose.addEventListener('click', closeModal);
+
+        // --- 初期化 ---
+        renderCharacterCards();
+    });
+    </script>
+</body>
+</html>
